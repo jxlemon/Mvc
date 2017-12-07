@@ -17,6 +17,8 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Internal
         private static readonly Action<ILogger, string, string, Exception> _handlerMethodExecuted;
         private static readonly Action<ILogger, object, Exception> _pageFilterShortCircuit;
         private static readonly Action<ILogger, string, string[], Exception> _malformedPageDirective;
+        private static readonly Action<ILogger, string, string, string, Exception> _beforeExecutingMethodOnFilter;
+        private static readonly Action<ILogger, string, string, string, Exception> _afterExecutingMethodOnFilter;
 
         static PageLoggerExtensions()
         {
@@ -41,6 +43,16 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Internal
                 LogLevel.Warning,
                 104,
                 "The page directive at '{FilePath}' is malformed. Please fix the following issues: {Diagnostics}");
+
+            _beforeExecutingMethodOnFilter = LoggerMessage.Define<string, string, string>(
+                LogLevel.Trace,
+                1,
+                "{FilterType}: Before executing {Method} on filter {Filter}.");
+
+            _afterExecutingMethodOnFilter = LoggerMessage.Define<string, string, string>(
+                LogLevel.Trace,
+                2,
+                "{FilterType}: After executing {Method} on filter {Filter}.");
         }
 
         public static void ExecutingHandlerMethod(this ILogger logger, PageContext context, HandlerMethodDescriptor handler, object[] arguments)
@@ -76,6 +88,16 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Internal
                 var handlerName = handler.MethodInfo.Name;
                 _handlerMethodExecuted(logger, handlerName, Convert.ToString(result), null);
             }
+        }
+
+        public static void BeforeExecutingMethodOnFilter(this ILogger logger, string filterType, string methodName, IFilterMetadata filter)
+        {
+            _beforeExecutingMethodOnFilter(logger, filterType, methodName, filter.GetType().ToString(), null);
+        }
+
+        public static void AfterExecutingMethodOnFilter(this ILogger logger, string filterType, string methodName, IFilterMetadata filter)
+        {
+            _afterExecutingMethodOnFilter(logger, filterType, methodName, filter.GetType().ToString(), null);
         }
 
         public static void PageFilterShortCircuited(
