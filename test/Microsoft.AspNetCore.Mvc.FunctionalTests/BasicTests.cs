@@ -472,5 +472,16 @@ namespace Microsoft.AspNetCore.Mvc.FunctionalTests
             // Assert
             Assert.Equal("true", response);
         }
+
+        [Fact]
+        public async Task AlwaysRunResultFilters_CanRunWhenResourceFiltersShortCircuit()
+        {
+            // Act
+            var response = await Client.GetAsync("Filters/AlwaysRunResultFiltersCanRunWhenResourceFilterShortCircuit");
+
+            // Assert
+            Assert.Equal(422, (int)response.StatusCode);
+            Assert.Equal("Can't process this!", await response.Content.ReadAsStringAsync());
+        }
     }
 }

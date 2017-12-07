@@ -23,61 +23,6 @@ namespace Microsoft.AspNetCore.Mvc.FunctionalTests
 
         public HttpClient Client { get; }
 
-        // A controller can only be an action filter and result filter, so we don't have entries
-        // for the other filter types implemented by the controller.
-        [Fact]
-        public async Task ListAllFilters()
-        {
-            // Arrange
-            var expected = new string[]
-            {
-                "Global Authorization Filter - OnAuthorization",
-                "On Controller Authorization Filter - OnAuthorization",
-                "Authorize Filter On Action - OnAuthorization",
-                "Global Resource Filter - OnResourceExecuting",
-                "Controller Resource Filter - OnResourceExecuting",
-                "Action Resource Filter - OnResourceExecuting",
-                "Controller Override - OnActionExecuting",
-                "Global Action Filter - OnActionExecuting",
-                "On Controller Action Filter - OnActionExecuting",
-                "On Action Action Filter - OnActionExecuting",
-                "Executing Action",
-                "On Action Action Filter - OnActionExecuted",
-                "On Controller Action Filter - OnActionExecuted",
-                "Global Action Filter - OnActionExecuted",
-                "Controller Override - OnActionExecuted",
-                "Controller Override - OnResultExecuting",
-                "Global Result Filter - OnResultExecuted",
-                "On Controller Result Filter - OnResultExecuting",
-                "On Action Result Filter - OnResultExecuting",
-                "On Action Result Filter - OnResultExecuted",
-                "On Controller Result Filter - OnResultExecuted",
-                "Global Result Filter - OnResultExecuted",
-                "Controller Override - OnResultExecuted",
-                "Action Resource Filter - OnResourceExecuted",
-                "Controller Resource Filter - OnResourceExecuted",
-                "Global Resource Filter - OnResourceExecuted",
-            };
-
-            // Act
-            var response = await Client.GetAsync("http://localhost/Products/GetPrice/5");
-
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-            var body = await response.Content.ReadAsStringAsync();
-
-            var filters = response.Headers.GetValues("filters").ToArray();
-
-            var i = 0;
-            foreach (var filter in filters)
-            {
-                Assert.Equal(expected[i++], filter);
-            }
-
-            Assert.Equal(expected.Length, filters.Length);
-        }
-
         [Fact]
         public async Task AnonymousUsersAreBlocked()
         {
