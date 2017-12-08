@@ -310,17 +310,17 @@ namespace Microsoft.AspNetCore.Mvc.Internal
                 "Unable to unambiguously infer binding sources for parameters on '{ActionName}'. More than one parameter may be inferred to bound from body.");
 
             _unsupportedFormatFilterContentType = LoggerMessage.Define<string>(
-                LogLevel.Debug,
+                LogLevel.Trace,
                 1,
                 "Could not find a formatter which supports the content type format '{FormatFilterContentType}'.");
 
             _actionDoesNotSupportFormatFilterContentType = LoggerMessage.Define<string>(
-                LogLevel.Debug,
+                LogLevel.Trace,
                 2,
                 "Current action does not support the content type format '{FormatFilterContentType}'.");
 
             _cannotApplyFormatFilterContentType = LoggerMessage.Define<string>(
-                LogLevel.Debug,
+                LogLevel.Trace,
                 3,
                 "Cannot apply content type format '{FormatFilterContentType}' to the response as current action had explicitly set a preferred content type.");
 
