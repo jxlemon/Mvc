@@ -3,6 +3,7 @@
 
 using System;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Logging;
 
 namespace Microsoft.AspNetCore.Mvc.Internal
 {
@@ -12,15 +13,18 @@ namespace Microsoft.AspNetCore.Mvc.Internal
     public class ResponseCacheFilter : IActionFilter, IResponseCacheFilter
     {
         private readonly ResponseCacheFilterExecutor _executor;
+        private readonly ILogger _logger;
 
         /// <summary>
         /// Creates a new instance of <see cref="ResponseCacheFilter"/>
         /// </summary>
         /// <param name="cacheProfile">The profile which contains the settings for
         /// <see cref="ResponseCacheFilter"/>.</param>
-        public ResponseCacheFilter(CacheProfile cacheProfile)
+        /// <param name="loggerFactory">The <see cref="ILoggerFactory"/>.</param>
+        public ResponseCacheFilter(CacheProfile cacheProfile, ILoggerFactory loggerFactory)
         {
             _executor = new ResponseCacheFilterExecutor(cacheProfile);
+            _logger = loggerFactory.CreateLogger(GetType());
         }
 
         /// <summary>
@@ -88,6 +92,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
             // then skip execution of this filter.
             if (!context.IsEffectivePolicy<IResponseCacheFilter>(this))
             {
+                _logger.NotMostEffectiveFilter(typeof(IResponseCacheFilter).ToString());
                 return;
             }
 

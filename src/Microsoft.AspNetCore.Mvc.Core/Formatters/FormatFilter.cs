@@ -6,6 +6,8 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Formatters.Internal;
+using Microsoft.AspNetCore.Mvc.Internal;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Microsoft.AspNetCore.Mvc.Formatters
@@ -17,14 +19,26 @@ namespace Microsoft.AspNetCore.Mvc.Formatters
     public class FormatFilter : IFormatFilter, IResourceFilter, IResultFilter
     {
         private readonly MvcOptions _options;
+        private readonly ILogger _logger;
 
         /// <summary>
         /// Initializes an instance of <see cref="FormatFilter"/>.
         /// </summary>
         /// <param name="options">The <see cref="IOptions{MvcOptions}"/></param>
         public FormatFilter(IOptions<MvcOptions> options)
+            : this(options, loggerFactory: null)
+        {
+        }
+
+        /// <summary>
+        /// Initializes an instance of <see cref="FormatFilter"/>.
+        /// </summary>
+        /// <param name="options">The <see cref="IOptions{MvcOptions}"/></param>
+        /// <param name="loggerFactory">The <see cref="ILoggerFactory"/>.</param>
+        public FormatFilter(IOptions<MvcOptions> options, ILoggerFactory loggerFactory)
         {
             _options = options.Value;
+            _logger = loggerFactory?.CreateLogger(GetType());
         }
 
         /// <inheritdoc />
@@ -69,6 +83,8 @@ namespace Microsoft.AspNetCore.Mvc.Formatters
             var contentType = _options.FormatterMappings.GetMediaTypeMappingForFormat(format);
             if (contentType == null)
             {
+                _logger?.UnsupportedFormatFilterContentType(format);
+
                 // no contentType exists for the format, return 404
                 context.Result = new NotFoundResult();
                 return;
@@ -91,6 +107,8 @@ namespace Microsoft.AspNetCore.Mvc.Formatters
                 // type than requested e.g. OK if "text/*" requested and action supports "text/plain".
                 if (!IsSuperSetOfAnySupportedMediaType(contentType, supportedMediaTypes))
                 {
+                    _logger?.ActionDoesNotSupportFormatFilterContentType(contentType);
+
                     context.Result = new NotFoundResult();
                 }
             }
@@ -145,6 +163,7 @@ namespace Microsoft.AspNetCore.Mvc.Formatters
             if ((objectResult.ContentTypes != null && objectResult.ContentTypes.Count == 1) ||
                 !string.IsNullOrEmpty(context.HttpContext.Response.ContentType))
             {
+                _logger?.CannotApplyFormatFilterContentType(format);
                 return;
             }
 

@@ -2,8 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -24,7 +22,7 @@ namespace Microsoft.AspNetCore.Mvc.ViewFeatures.Internal
             }
 
             _antiforgery = antiforgery;
-            _logger = loggerFactory.CreateLogger<ValidateAntiforgeryTokenAuthorizationFilter>();
+            _logger = loggerFactory.CreateLogger(GetType());
         }
 
         public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
@@ -45,6 +43,10 @@ namespace Microsoft.AspNetCore.Mvc.ViewFeatures.Internal
                     _logger.AntiforgeryTokenInvalid(exception.Message, exception);
                     context.Result = new BadRequestResult();
                 }
+            }
+            else
+            {
+                _logger.NotMostEffectiveFilter(typeof(IAntiforgeryPolicy).ToString());
             }
         }
 

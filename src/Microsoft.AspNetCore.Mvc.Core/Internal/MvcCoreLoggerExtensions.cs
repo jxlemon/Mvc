@@ -87,6 +87,11 @@ namespace Microsoft.AspNetCore.Mvc.Internal
         private static readonly Action<ILogger, MethodInfo, string, string, Exception> _inferredParameterSource;
         private static readonly Action<ILogger, MethodInfo, Exception> _unableToInferParameterSources;
 
+        private static readonly Action<ILogger, string, Exception> _unsupportedFormatFilterContentType;
+        private static readonly Action<ILogger, string, Exception> _actionDoesNotSupportFormatFilterContentType;
+        private static readonly Action<ILogger, string, Exception> _cannotApplyFormatFilterContentType;
+        private static readonly Action<ILogger, string, Exception> _notMostEffectiveFilter;
+
         static MvcCoreLoggerExtensions()
         {
             _actionExecuting = LoggerMessage.Define<string>(
@@ -303,6 +308,26 @@ namespace Microsoft.AspNetCore.Mvc.Internal
                 LogLevel.Warning,
                 2,
                 "Unable to unambiguously infer binding sources for parameters on '{ActionName}'. More than one parameter may be inferred to bound from body.");
+
+            _unsupportedFormatFilterContentType = LoggerMessage.Define<string>(
+                LogLevel.Debug,
+                1,
+                "Could not find a formatter which supports the content type format '{FormatFilterContentType}'.");
+
+            _actionDoesNotSupportFormatFilterContentType = LoggerMessage.Define<string>(
+                LogLevel.Debug,
+                2,
+                "Current action does not support the content type format '{FormatFilterContentType}'.");
+
+            _cannotApplyFormatFilterContentType = LoggerMessage.Define<string>(
+                LogLevel.Debug,
+                3,
+                "Cannot apply content type format '{FormatFilterContentType}' to the response as current action had explicitly set a preferred content type.");
+
+            _notMostEffectiveFilter = LoggerMessage.Define<string>(
+                LogLevel.Trace,
+                4,
+                "Skipping the execution of current filter as its not the most effective filter implementing the policy {FilterPolicy}.");
         }
 
         public static IDisposable ActionScope(this ILogger logger, ActionDescriptor action)
@@ -611,6 +636,26 @@ namespace Microsoft.AspNetCore.Mvc.Internal
         public static void AppliedRequestFormLimits(this ILogger logger)
         {
             _appliedRequestFormLimits(logger, null);
+        }
+
+        public static void NotMostEffectiveFilter(this ILogger logger, string policyName)
+        {
+            _notMostEffectiveFilter(logger, policyName, null);
+        }
+
+        public static void UnsupportedFormatFilterContentType(this ILogger logger, string format)
+        {
+            _unsupportedFormatFilterContentType(logger, format, null);
+        }
+
+        public static void ActionDoesNotSupportFormatFilterContentType(this ILogger logger, string format)
+        {
+            _actionDoesNotSupportFormatFilterContentType(logger, format, null);
+        }
+
+        public static void CannotApplyFormatFilterContentType(this ILogger logger, string format)
+        {
+            _cannotApplyFormatFilterContentType(logger, format, null);
         }
 
         public static void ModelStateInvalidFilterExecuting(this ILogger logger) => _modelStateInvalidFilterExecuting(logger, null);

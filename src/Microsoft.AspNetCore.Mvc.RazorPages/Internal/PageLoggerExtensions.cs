@@ -17,6 +17,7 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Internal
         private static readonly Action<ILogger, string, string, Exception> _handlerMethodExecuted;
         private static readonly Action<ILogger, object, Exception> _pageFilterShortCircuit;
         private static readonly Action<ILogger, string, string[], Exception> _malformedPageDirective;
+        private static readonly Action<ILogger, string, Exception> _notMostEffectiveFilter;
 
         static PageLoggerExtensions()
         {
@@ -41,6 +42,11 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Internal
                 LogLevel.Warning,
                 104,
                 "The page directive at '{FilePath}' is malformed. Please fix the following issues: {Diagnostics}");
+
+            _notMostEffectiveFilter = LoggerMessage.Define<string>(
+               LogLevel.Trace,
+               1,
+               "Skipping the execution of current filter as its not the most effective filter implementing the policy {FilterPolicy}.");
         }
 
         public static void ExecutingHandlerMethod(this ILogger logger, PageContext context, HandlerMethodDescriptor handler, object[] arguments)
@@ -97,6 +103,11 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Internal
 
                 _malformedPageDirective(logger, filePath, messages, null);
             }
+        }
+
+        public static void NotMostEffectiveFilter(this ILogger logger, string policyName)
+        {
+            _notMostEffectiveFilter(logger, policyName, null);
         }
     }
 }
