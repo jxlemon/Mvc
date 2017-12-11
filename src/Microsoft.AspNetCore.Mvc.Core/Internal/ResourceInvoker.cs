@@ -89,11 +89,11 @@ namespace Microsoft.AspNetCore.Mvc.Internal
                 {
                     _logger.ExecutingAction(_actionContext.ActionDescriptor);
 
-                    _logger.ExecutingAuthorizationFilters(_filters);
-                    _logger.ExecutingResourceFilters(_filters);
-                    _logger.ExecutingActionFilters(_filters);
-                    _logger.ExecutingExceptionFilters(_filters);
-                    _logger.ExecutingResultFilters(_filters);
+                    _logger.AuthorizationFiltersExecutionPlan(_filters);
+                    _logger.ResourceFiltersExecutionPlan(_filters);
+                    _logger.ActionFiltersExecutionPlan(_filters);
+                    _logger.ExceptionFiltersExecutionPlan(_filters);
+                    _logger.ResultFiltersExecutionPlan(_filters);
 
                     var startTimestamp = _logger.IsEnabled(LogLevel.Information) ? Stopwatch.GetTimestamp() : 0;
 

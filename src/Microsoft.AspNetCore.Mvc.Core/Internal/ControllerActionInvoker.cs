@@ -17,6 +17,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
 {
     public class ControllerActionInvoker : ResourceInvoker, IActionInvoker
     {
+        private const string ActionFilter = "Action Filter";
         private readonly ControllerActionInvokerCacheEntry _cacheEntry;
         private readonly ControllerContext _controllerContext;
 
@@ -24,7 +25,6 @@ namespace Microsoft.AspNetCore.Mvc.Internal
 
         private ActionExecutingContext _actionExecutingContext;
         private ActionExecutedContext _actionExecutedContext;
-        private const string ActionFilter = "Action Filter";
 
         internal ControllerActionInvoker(
             ILogger logger,
