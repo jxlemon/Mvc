@@ -37,10 +37,10 @@ namespace Microsoft.AspNetCore.Mvc.Internal
         private static readonly Action<ILogger, string, string, Exception> _actionMethodExecuted;
 
         private static readonly Action<ILogger, string, string[], Exception> _logFilterExecutionPlan;
-        private static readonly Action<ILogger, string, string, string, Exception> _beforeExecutingMethodOnFilter;
-        private static readonly Action<ILogger, string, string, string, Exception> _afterExecutingMethodOnFilter;
-        private static readonly Action<ILogger, string, Exception> _beforeExecutingActionResult;
-        private static readonly Action<ILogger, string, Exception> _afterExecutingActionResult;
+        private static readonly Action<ILogger, string, string, Type, Exception> _beforeExecutingMethodOnFilter;
+        private static readonly Action<ILogger, string, string, Type, Exception> _afterExecutingMethodOnFilter;
+        private static readonly Action<ILogger, Type, Exception> _beforeExecutingActionResult;
+        private static readonly Action<ILogger, Type, Exception> _afterExecutingActionResult;
 
         private static readonly Action<ILogger, string, Exception> _ambiguousActions;
         private static readonly Action<ILogger, string, string, IActionConstraint, Exception> _constraintMismatch;
@@ -133,22 +133,22 @@ namespace Microsoft.AspNetCore.Mvc.Internal
                 1,
                 "Execution plan of {FilterType} filters (in the following order): {Filters}");
 
-            _beforeExecutingMethodOnFilter = LoggerMessage.Define<string, string, string>(
+            _beforeExecutingMethodOnFilter = LoggerMessage.Define<string, string, Type>(
                 LogLevel.Trace,
                 2,
                 "{FilterType}: Before executing {Method} on filter {Filter}.");
 
-            _afterExecutingMethodOnFilter = LoggerMessage.Define<string, string, string>(
+            _afterExecutingMethodOnFilter = LoggerMessage.Define<string, string, Type>(
                 LogLevel.Trace,
                 3,
                 "{FilterType}: After executing {Method} on filter {Filter}.");
 
-            _beforeExecutingActionResult = LoggerMessage.Define<string>(
+            _beforeExecutingActionResult = LoggerMessage.Define<Type>(
                 LogLevel.Trace,
                 4,
                 "Before executing action result {ActionResult}.");
 
-            _afterExecutingActionResult = LoggerMessage.Define<string>(
+            _afterExecutingActionResult = LoggerMessage.Define<Type>(
                 LogLevel.Trace,
                 5,
                 "After executing action result {ActionResult}.");
@@ -385,7 +385,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
             string methodName,
             IFilterMetadata filter)
         {
-            _beforeExecutingMethodOnFilter(logger, filterType, methodName, filter.GetType().ToString(), null);
+            _beforeExecutingMethodOnFilter(logger, filterType, methodName, filter.GetType(), null);
         }
 
         public static void AfterExecutingMethodOnFilter(
@@ -394,7 +394,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
             string methodName,
             IFilterMetadata filter)
         {
-            _afterExecutingMethodOnFilter(logger, filterType, methodName, filter.GetType().ToString(), null);
+            _afterExecutingMethodOnFilter(logger, filterType, methodName, filter.GetType(), null);
         }
 
         public static void ExecutedAction(this ILogger logger, ActionDescriptor action, long startTimestamp)
@@ -442,12 +442,12 @@ namespace Microsoft.AspNetCore.Mvc.Internal
 
         public static void BeforeExecutingActionResult(this ILogger logger, IActionResult actionResult)
         {
-            _beforeExecutingActionResult(logger, actionResult.GetType().ToString(), null);
+            _beforeExecutingActionResult(logger, actionResult.GetType(), null);
         }
 
         public static void AfterExecutingActionResult(this ILogger logger, IActionResult actionResult)
         {
-            _afterExecutingActionResult(logger, actionResult.GetType().ToString(), null);
+            _afterExecutingActionResult(logger, actionResult.GetType(), null);
         }
 
         public static void ActionMethodExecuting(this ILogger logger, ControllerContext context, object[] arguments)
@@ -733,6 +733,11 @@ namespace Microsoft.AspNetCore.Mvc.Internal
             string filterType,
             IEnumerable<IFilterMetadata> filters)
         {
+            if (!logger.IsEnabled(LogLevel.Debug))
+            {
+                return;
+            }
+
             var filterList = _noFilters;
             if (filters.Any())
             {
