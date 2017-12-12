@@ -20,7 +20,8 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Internal
                     model.RelativePath));
             }
 
-            var selectorModel = CreateSelectorModel(model.ViewEnginePath, routeTemplate);
+            var prefix = model.ViewEnginePath;
+            var selectorModel = CreateSelectorModel(prefix, routeTemplate);
             model.Selectors.Add(selectorModel);
 
             var fileName = Path.GetFileName(model.RelativePath);

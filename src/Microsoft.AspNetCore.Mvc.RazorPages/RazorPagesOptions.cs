@@ -13,6 +13,7 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages
     public class RazorPagesOptions
     {
         private string _root = "/Pages";
+        private string _areasRoot = "/Areas";
 
         /// <summary>
         /// Gets a collection of <see cref="IPageConvention"/> instances that are applied during
@@ -40,6 +41,27 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages
                 }
 
                 _root = value;
+            }
+        }
+
+        public bool EnableAreas { get; set; } = true;
+
+        public string AreasRootDirectory
+        {
+            get => _areasRoot;
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    throw new ArgumentException(Resources.ArgumentCannotBeNullOrEmpty, nameof(value));
+                }
+
+                if (value[0] != '/')
+                {
+                    throw new ArgumentException(Resources.PathMustBeRootRelativePath, nameof(value));
+                }
+
+                _areasRoot = value;
             }
         }
     }

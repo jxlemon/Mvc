@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Primitives;
 
 namespace Microsoft.AspNetCore.Mvc.RazorPages.Internal
 {
@@ -65,6 +66,44 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Internal
 
                 context.RouteModels.Add(routeModel);
             }
+
+            var areaRootDirectory = _pagesOptions.AreasRootDirectory;
+            if (!areaRootDirectory.EndsWith("/", StringComparison.Ordinal))
+            {
+                areaRootDirectory = areaRootDirectory + "/";
+            }
+            foreach (var item in _project.EnumerateItems(_pagesOptions.AreasRootDirectory))
+            {
+                if (item.FileName.StartsWith("_"))
+                {
+                    // Pages like _ViewImports should not be routable.
+                    continue;
+                }
+
+                if (!PageDirectiveFeature.TryGetPageDirective(_logger, item, out var routeTemplate))
+                {
+                    // .cshtml pages without @page are not RazorPages.
+                    continue;
+                }
+
+                if (!TryParseAreaPath(item.FilePath, out var areaResult))
+                {
+                    continue;
+                }
+
+                var routeModel = new PageRouteModel(
+                    relativePath: item.CombinedPath,
+                    viewEnginePath: areaResult.viewEnginePath)
+                {
+                    RouteValues =
+                    {
+                        ["area"] = areaResult.areaName,
+                    },
+                };
+                PageSelectorModel.PopulateDefaults(routeModel, routeTemplate);
+
+                context.RouteModels.Add(routeModel);
+            }
         }
 
         private bool IsAlreadyRegistered(PageRouteModelProviderContext context, RazorProjectItem projectItem)
@@ -80,6 +119,62 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Internal
             }
 
             return false;
+        }
+
+        private bool TryParseAreaPath(string path, out (string areaName, string viewEnginePath) result)
+        {
+            // rootDirectory = "/Areas/"
+            // path = "/Products/Pages/Manage/Home.cshtml"
+            // Result = ("Products", "/Products/Manage/Home")
+
+            result = default;
+            string areaName;
+            var tokenizer = new StringTokenizer(new StringSegment(path, 1, path.Length - 1), new[] { '/' });
+            using (var enumerator = tokenizer.GetEnumerator())
+            {
+                // Parse the area name
+                if (!enumerator.MoveNext() || enumerator.Current.Length == 0)
+                {
+                    return false;
+                }
+
+                areaName = enumerator.Current.ToString();
+
+                // Look for the "Pages" directory
+                if (!enumerator.MoveNext() || enumerator.Current.Length == 0)
+                {
+                    return false;
+                }
+
+                if (!enumerator.Current.Equals("Pages", StringComparison.OrdinalIgnoreCase))
+                {
+                    _logger.LogWarning($"Page {path} is being ignored because it does not follow the pattern [AreaName]/Pages/[Path]");
+                    return false;
+                }
+
+                // Parse the page path
+                if (!enumerator.MoveNext() || enumerator.Current.Length == 0)
+                {
+                    return false;
+                }
+            }
+
+            // "/Products/Pages/Manage/Home.cshtml".Length -> "/Products/Manage/Home"
+            var length = path.Length;
+            var endIndex = path.IndexOf('.');
+            if (endIndex != -1)
+            {
+                length = endIndex;
+            }
+
+            var builder = new InplaceStringBuilder(length - "Pages/".Length);
+            builder.Append('/');
+            builder.Append(areaName);
+            var offset = areaName.Length + "/Pages/".Length;
+            builder.Append(path, offset, length - offset);
+
+            result = (areaName, builder.ToString());
+            return true;
         }
     }
 }

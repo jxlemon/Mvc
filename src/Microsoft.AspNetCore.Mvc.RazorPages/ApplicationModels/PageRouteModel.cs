@@ -19,21 +19,12 @@ namespace Microsoft.AspNetCore.Mvc.ApplicationModels
         /// <param name="viewEnginePath">The path relative to the base path for page discovery.</param>
         public PageRouteModel(string relativePath, string viewEnginePath)
         {
-            if (relativePath == null)
-            {
-                throw new ArgumentNullException(nameof(relativePath));
-            }
-
-            if (viewEnginePath == null)
-            {
-                throw new ArgumentNullException(nameof(viewEnginePath));
-            }
-
-            RelativePath = relativePath;
-            ViewEnginePath = viewEnginePath;
+            RelativePath = relativePath ?? throw new ArgumentNullException(nameof(relativePath));
+            ViewEnginePath = viewEnginePath ?? throw new ArgumentNullException(nameof(viewEnginePath));
 
             Properties = new Dictionary<object, object>();
             Selectors = new List<SelectorModel>();
+            RouteValues = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -52,6 +43,7 @@ namespace Microsoft.AspNetCore.Mvc.ApplicationModels
 
             Properties = new Dictionary<object, object>(other.Properties);
             Selectors = new List<SelectorModel>(other.Selectors.Select(m => new SelectorModel(m)));
+            RouteValues = new Dictionary<string, string>(other.RouteValues, StringComparer.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -73,5 +65,7 @@ namespace Microsoft.AspNetCore.Mvc.ApplicationModels
         /// Gets the <see cref="SelectorModel"/> instances.
         /// </summary>
         public IList<SelectorModel> Selectors { get; }
+
+        public IDictionary<string, string> RouteValues { get; }
     }
 }
