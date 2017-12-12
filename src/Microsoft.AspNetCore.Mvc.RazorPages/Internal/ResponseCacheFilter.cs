@@ -94,7 +94,7 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Internal
 
             if (!context.IsEffectivePolicy<IResponseCacheFilter>(this))
             {
-                _logger.NotMostEffectiveFilter(typeof(IResponseCacheFilter).ToString());
+                _logger.NotMostEffectiveFilter(typeof(IResponseCacheFilter));
                 return;
             }
 

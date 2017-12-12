@@ -92,7 +92,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
             // then skip execution of this filter.
             if (!context.IsEffectivePolicy<IResponseCacheFilter>(this))
             {
-                _logger.NotMostEffectiveFilter(typeof(IResponseCacheFilter).ToString());
+                _logger.NotMostEffectiveFilter(typeof(IResponseCacheFilter));
                 return;
             }
 

@@ -8,19 +8,19 @@ namespace Microsoft.AspNetCore.Mvc.Cors.Internal
 {
     public static class CorsLoggerExtensions
     {
-        private static readonly Action<ILogger, string, Exception> _notMostEffectiveFilter;
+        private static readonly Action<ILogger, Type, Exception> _notMostEffectiveFilter;
 
         static CorsLoggerExtensions()
         {
-            _notMostEffectiveFilter = LoggerMessage.Define<string>(
-               LogLevel.Trace,
+            _notMostEffectiveFilter = LoggerMessage.Define<Type>(
+               LogLevel.Debug,
                1,
                "Skipping the execution of current filter as its not the most effective filter implementing the policy {FilterPolicy}.");
         }
 
-        public static void NotMostEffectiveFilter(this ILogger logger, string policyName)
+        public static void NotMostEffectiveFilter(this ILogger logger, Type policyType)
         {
-            _notMostEffectiveFilter(logger, policyName, null);
+            _notMostEffectiveFilter(logger, policyType, null);
         }
     }
 }

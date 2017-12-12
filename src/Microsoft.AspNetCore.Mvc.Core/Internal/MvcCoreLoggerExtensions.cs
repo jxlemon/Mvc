@@ -88,9 +88,9 @@ namespace Microsoft.AspNetCore.Mvc.Internal
         private static readonly Action<ILogger, MethodInfo, Exception> _unableToInferParameterSources;
 
         private static readonly Action<ILogger, string, Exception> _unsupportedFormatFilterContentType;
-        private static readonly Action<ILogger, string, Exception> _actionDoesNotSupportFormatFilterContentType;
+        private static readonly Action<ILogger, string, MediaTypeCollection, Exception> _actionDoesNotSupportFormatFilterContentType;
         private static readonly Action<ILogger, string, Exception> _cannotApplyFormatFilterContentType;
-        private static readonly Action<ILogger, string, Exception> _notMostEffectiveFilter;
+        private static readonly Action<ILogger, Type, Exception> _notMostEffectiveFilter;
 
         static MvcCoreLoggerExtensions()
         {
@@ -310,22 +310,22 @@ namespace Microsoft.AspNetCore.Mvc.Internal
                 "Unable to unambiguously infer binding sources for parameters on '{ActionName}'. More than one parameter may be inferred to bound from body.");
 
             _unsupportedFormatFilterContentType = LoggerMessage.Define<string>(
-                LogLevel.Trace,
+                LogLevel.Debug,
                 1,
-                "Could not find a formatter which supports the content type format '{FormatFilterContentType}'.");
+                "Could not find a media type for the format '{FormatFilterContentType}'.");
 
-            _actionDoesNotSupportFormatFilterContentType = LoggerMessage.Define<string>(
-                LogLevel.Trace,
+            _actionDoesNotSupportFormatFilterContentType = LoggerMessage.Define<string, MediaTypeCollection>(
+                LogLevel.Debug,
                 2,
-                "Current action does not support the content type format '{FormatFilterContentType}'.");
+                "Current action does not support the content type '{FormatFilterContentType}'. The supported content types are '{SupportedMediaTypes}'.");
 
             _cannotApplyFormatFilterContentType = LoggerMessage.Define<string>(
-                LogLevel.Trace,
+                LogLevel.Debug,
                 3,
-                "Cannot apply content type format '{FormatFilterContentType}' to the response as current action had explicitly set a preferred content type.");
+                "Cannot apply content type '{FormatFilterContentType}' to the response as current action had explicitly set a preferred content type.");
 
-            _notMostEffectiveFilter = LoggerMessage.Define<string>(
-                LogLevel.Trace,
+            _notMostEffectiveFilter = LoggerMessage.Define<Type>(
+                LogLevel.Debug,
                 4,
                 "Skipping the execution of current filter as its not the most effective filter implementing the policy {FilterPolicy}.");
         }
@@ -638,9 +638,9 @@ namespace Microsoft.AspNetCore.Mvc.Internal
             _appliedRequestFormLimits(logger, null);
         }
 
-        public static void NotMostEffectiveFilter(this ILogger logger, string policyName)
+        public static void NotMostEffectiveFilter(this ILogger logger, Type policyType)
         {
-            _notMostEffectiveFilter(logger, policyName, null);
+            _notMostEffectiveFilter(logger, policyType, null);
         }
 
         public static void UnsupportedFormatFilterContentType(this ILogger logger, string format)
@@ -648,9 +648,12 @@ namespace Microsoft.AspNetCore.Mvc.Internal
             _unsupportedFormatFilterContentType(logger, format, null);
         }
 
-        public static void ActionDoesNotSupportFormatFilterContentType(this ILogger logger, string format)
+        public static void ActionDoesNotSupportFormatFilterContentType(
+            this ILogger logger,
+            string format,
+            MediaTypeCollection supportedMediaTypes)
         {
-            _actionDoesNotSupportFormatFilterContentType(logger, format, null);
+            _actionDoesNotSupportFormatFilterContentType(logger, format, supportedMediaTypes, null);
         }
 
         public static void CannotApplyFormatFilterContentType(this ILogger logger, string format)

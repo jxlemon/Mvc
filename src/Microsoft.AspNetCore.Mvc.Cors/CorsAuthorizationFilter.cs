@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Cors.Internal;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Primitives;
 
 namespace Microsoft.AspNetCore.Mvc.Cors
@@ -26,7 +27,7 @@ namespace Microsoft.AspNetCore.Mvc.Cors
         /// <param name="corsService">The <see cref="ICorsService"/>.</param>
         /// <param name="policyProvider">The <see cref="ICorsPolicyProvider"/>.</param>
         public CorsAuthorizationFilter(ICorsService corsService, ICorsPolicyProvider policyProvider)
-            : this(corsService, policyProvider, loggerFactory: null)
+            : this(corsService, policyProvider, new NullLoggerFactory())
         {
         }
 
@@ -43,7 +44,7 @@ namespace Microsoft.AspNetCore.Mvc.Cors
         {
             _corsService = corsService;
             _corsPolicyProvider = policyProvider;
-            _logger = loggerFactory?.CreateLogger(GetType());
+            _logger = loggerFactory.CreateLogger(GetType());
         }
 
         /// <summary>
@@ -67,7 +68,7 @@ namespace Microsoft.AspNetCore.Mvc.Cors
             // If this filter is not closest to the action, it is not applicable.
             if (!context.IsEffectivePolicy<ICorsAuthorizationFilter>(this))
             {
-                _logger?.NotMostEffectiveFilter(typeof(ICorsAuthorizationFilter).ToString());
+                _logger.NotMostEffectiveFilter(typeof(ICorsAuthorizationFilter));
                 return;
             }
 

@@ -38,27 +38,26 @@ namespace Microsoft.AspNetCore.Mvc.Internal
                 throw new ArgumentNullException(nameof(context));
             }
 
-            if (context.IsEffectivePolicy<IRequestSizePolicy>(this))
+            if (!context.IsEffectivePolicy<IRequestSizePolicy>(this))
             {
-                var maxRequestBodySizeFeature = context.HttpContext.Features.Get<IHttpMaxRequestBodySizeFeature>();
+                _logger.NotMostEffectiveFilter(typeof(IRequestSizePolicy));
+                return;
+            }
 
-                if (maxRequestBodySizeFeature == null)
-                {
-                    _logger.FeatureNotFound();
-                }
-                else if (maxRequestBodySizeFeature.IsReadOnly)
-                {
-                    _logger.FeatureIsReadOnly();
-                }
-                else
-                {
-                    maxRequestBodySizeFeature.MaxRequestBodySize = null;
-                    _logger.RequestBodySizeLimitDisabled();
-                }
+            var maxRequestBodySizeFeature = context.HttpContext.Features.Get<IHttpMaxRequestBodySizeFeature>();
+
+            if (maxRequestBodySizeFeature == null)
+            {
+                _logger.FeatureNotFound();
+            }
+            else if (maxRequestBodySizeFeature.IsReadOnly)
+            {
+                _logger.FeatureIsReadOnly();
             }
             else
             {
-                _logger.NotMostEffectiveFilter(typeof(IRequestSizePolicy).ToString());
+                maxRequestBodySizeFeature.MaxRequestBodySize = null;
+                _logger.RequestBodySizeLimitDisabled();
             }
         }
     }

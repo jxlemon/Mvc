@@ -32,7 +32,13 @@ namespace Microsoft.AspNetCore.Mvc.ViewFeatures.Internal
                 throw new ArgumentNullException(nameof(context));
             }
 
-            if (context.IsEffectivePolicy<IAntiforgeryPolicy>(this) && ShouldValidate(context))
+            if (!context.IsEffectivePolicy<IAntiforgeryPolicy>(this))
+            {
+                _logger.NotMostEffectiveFilter(typeof(IAntiforgeryPolicy));
+                return;
+            }
+
+            if (ShouldValidate(context))
             {
                 try
                 {
@@ -43,10 +49,6 @@ namespace Microsoft.AspNetCore.Mvc.ViewFeatures.Internal
                     _logger.AntiforgeryTokenInvalid(exception.Message, exception);
                     context.Result = new BadRequestResult();
                 }
-            }
-            else
-            {
-                _logger.NotMostEffectiveFilter(typeof(IAntiforgeryPolicy).ToString());
             }
         }
 

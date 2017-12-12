@@ -29,25 +29,24 @@ namespace Microsoft.AspNetCore.Mvc.Internal
                 throw new ArgumentNullException(nameof(context));
             }
 
-            if (context.IsEffectivePolicy<IRequestFormLimitsPolicy>(this))
+            if (!context.IsEffectivePolicy<IRequestFormLimitsPolicy>(this))
             {
-                var features = context.HttpContext.Features;
-                var formFeature = features.Get<IFormFeature>();
+                _logger.NotMostEffectiveFilter(typeof(IRequestFormLimitsPolicy));
+                return;
+            }
 
-                if (formFeature == null || formFeature.Form == null)
-                {
-                    // Request form has not been read yet, so set the limits
-                    features.Set<IFormFeature>(new FormFeature(context.HttpContext.Request, FormOptions));
-                    _logger.AppliedRequestFormLimits();
-                }
-                else
-                {
-                    _logger.CannotApplyRequestFormLimits();
-                }
+            var features = context.HttpContext.Features;
+            var formFeature = features.Get<IFormFeature>();
+
+            if (formFeature == null || formFeature.Form == null)
+            {
+                // Request form has not been read yet, so set the limits
+                features.Set<IFormFeature>(new FormFeature(context.HttpContext.Request, FormOptions));
+                _logger.AppliedRequestFormLimits();
             }
             else
             {
-                _logger.NotMostEffectiveFilter(typeof(IRequestFormLimitsPolicy).ToString());
+                _logger.CannotApplyRequestFormLimits();
             }
         }
     }
