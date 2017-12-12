@@ -21,7 +21,6 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Internal
 {
     public class PageActionInvoker : ResourceInvoker, IActionInvoker
     {
-        private const string PageFilter = "Page Filter";
         private readonly IPageHandlerMethodSelector _selector;
         private readonly PageContext _pageContext;
         private readonly ParameterBinder _parameterBinder;
@@ -344,7 +343,7 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Internal
 
                         _diagnosticSource.BeforeOnPageHandlerSelection(handlerSelectedContext, filter);
                         _logger.BeforeExecutingMethodOnFilter(
-                            PageFilter,
+                            PageLoggerExtensions.PageFilter,
                             nameof(IAsyncPageFilter.OnPageHandlerSelectionAsync),
                             filter);
 
@@ -367,7 +366,7 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Internal
 
                         _diagnosticSource.AfterOnPageHandlerSelection(_handlerSelectedContext, filter);
                         _logger.AfterExecutingMethodOnFilter(
-                            PageFilter,
+                            PageLoggerExtensions.PageFilter,
                             nameof(IAsyncPageFilter.OnPageHandlerSelectionAsync),
                             filter);
 
@@ -384,7 +383,7 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Internal
 
                         _diagnosticSource.BeforeOnPageHandlerSelected(handlerSelectedContext, filter);
                         _logger.BeforeExecutingMethodOnFilter(
-                            PageFilter,
+                            PageLoggerExtensions.PageFilter,
                             nameof(IPageFilter.OnPageHandlerSelected),
                             filter);
 
@@ -455,7 +454,7 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Internal
 
                         _diagnosticSource.BeforeOnPageHandlerExecution(handlerExecutingContext, filter);
                         _logger.BeforeExecutingMethodOnFilter(
-                            PageFilter,
+                            PageLoggerExtensions.PageFilter,
                             nameof(IAsyncPageFilter.OnPageHandlerExecutionAsync),
                             filter);
 
@@ -494,7 +493,7 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Internal
 
                         _diagnosticSource.AfterOnPageHandlerExecution(_handlerExecutedContext, filter);
                         _logger.AfterExecutingMethodOnFilter(
-                           PageFilter,
+                           PageLoggerExtensions.PageFilter,
                            nameof(IAsyncPageFilter.OnPageHandlerExecutionAsync),
                            filter);
 
@@ -511,7 +510,7 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Internal
 
                         _diagnosticSource.BeforeOnPageHandlerExecuting(handlerExecutingContext, filter);
                         _logger.BeforeExecutingMethodOnFilter(
-                           PageFilter,
+                           PageLoggerExtensions.PageFilter,
                            nameof(IPageFilter.OnPageHandlerExecuting),
                            filter);
 
@@ -519,7 +518,7 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Internal
 
                         _diagnosticSource.AfterOnPageHandlerExecuting(handlerExecutingContext, filter);
                         _logger.AfterExecutingMethodOnFilter(
-                           PageFilter,
+                           PageLoggerExtensions.PageFilter,
                            nameof(IPageFilter.OnPageHandlerExecuting),
                            filter);
 
@@ -562,7 +561,7 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Internal
 
                         _diagnosticSource.BeforeOnPageHandlerExecuted(handlerExecutedContext, filter);
                         _logger.BeforeExecutingMethodOnFilter(
-                           PageFilter,
+                           PageLoggerExtensions.PageFilter,
                            nameof(IPageFilter.OnPageHandlerExecuted),
                            filter);
 
@@ -570,7 +569,7 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Internal
 
                         _diagnosticSource.AfterOnPageHandlerExecuted(handlerExecutedContext, filter);
                         _logger.AfterExecutingMethodOnFilter(
-                           PageFilter,
+                           PageLoggerExtensions.PageFilter,
                            nameof(IPageFilter.OnPageHandlerExecuted),
                            filter);
 

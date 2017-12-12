@@ -17,7 +17,6 @@ namespace Microsoft.AspNetCore.Mvc.Internal
 {
     public class ControllerActionInvoker : ResourceInvoker, IActionInvoker
     {
-        private const string ActionFilter = "Action Filter";
         private readonly ControllerActionInvokerCacheEntry _cacheEntry;
         private readonly ControllerContext _controllerContext;
 
@@ -117,7 +116,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
 
                         _diagnosticSource.BeforeOnActionExecution(actionExecutingContext, filter);
                         _logger.BeforeExecutingMethodOnFilter(
-                            ActionFilter,
+                            MvcCoreLoggerExtensions.ActionFilter,
                             nameof(IAsyncActionFilter.OnActionExecutionAsync),
                             filter);
 
@@ -155,7 +154,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
 
                         _diagnosticSource.AfterOnActionExecution(_actionExecutedContext, filter);
                         _logger.AfterExecutingMethodOnFilter(
-                            ActionFilter,
+                            MvcCoreLoggerExtensions.ActionFilter,
                             nameof(IAsyncActionFilter.OnActionExecutionAsync),
                             filter);
 
@@ -172,7 +171,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
 
                         _diagnosticSource.BeforeOnActionExecuting(actionExecutingContext, filter);
                         _logger.BeforeExecutingMethodOnFilter(
-                            ActionFilter,
+                            MvcCoreLoggerExtensions.ActionFilter,
                             nameof(IActionFilter.OnActionExecuting),
                             filter);
 
@@ -180,7 +179,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
 
                         _diagnosticSource.AfterOnActionExecuting(actionExecutingContext, filter);
                         _logger.AfterExecutingMethodOnFilter(
-                            ActionFilter,
+                            MvcCoreLoggerExtensions.ActionFilter,
                             nameof(IActionFilter.OnActionExecuting),
                             filter);
 
@@ -222,7 +221,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
 
                         _diagnosticSource.BeforeOnActionExecuted(actionExecutedContext, filter);
                         _logger.BeforeExecutingMethodOnFilter(
-                            ActionFilter,
+                            MvcCoreLoggerExtensions.ActionFilter,
                             nameof(IActionFilter.OnActionExecuted),
                             filter);
 
@@ -230,7 +229,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
 
                         _diagnosticSource.AfterOnActionExecuted(actionExecutedContext, filter);
                         _logger.AfterExecutingMethodOnFilter(
-                            ActionFilter,
+                            MvcCoreLoggerExtensions.ActionFilter,
                             nameof(IActionFilter.OnActionExecuted),
                             filter);
 

@@ -13,6 +13,8 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Internal
 {
     internal static class PageLoggerExtensions
     {
+        public const string PageFilter = "Page Filter";
+
         private static readonly Action<ILogger, string, string[], ModelValidationState, Exception> _handlerMethodExecuting;
         private static readonly Action<ILogger, string, string, Exception> _handlerMethodExecuted;
         private static readonly Action<ILogger, object, Exception> _pageFilterShortCircuit;

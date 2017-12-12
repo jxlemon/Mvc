@@ -21,6 +21,9 @@ namespace Microsoft.AspNetCore.Mvc.Internal
 {
     internal static class MvcCoreLoggerExtensions
     {
+        public const string ActionFilter = "Action Filter";
+        private static readonly string[] _noFilters = new[] { "None" };
+
         private static readonly double TimestampToTicks = TimeSpan.TicksPerSecond / (double)Stopwatch.Frequency;
 
         private static readonly Action<ILogger, string, Exception> _actionExecuting;
@@ -348,51 +351,31 @@ namespace Microsoft.AspNetCore.Mvc.Internal
 
         public static void AuthorizationFiltersExecutionPlan(this ILogger logger, IEnumerable<IFilterMetadata> filters)
         {
-            IEnumerable<IFilterMetadata> authorizationFilters = null;
-            if (filters != null)
-            {
-                authorizationFilters = filters.Where(f => f is IAuthorizationFilter || f is IAsyncAuthorizationFilter);
-            }
+            var authorizationFilters = filters.Where(f => f is IAuthorizationFilter || f is IAsyncAuthorizationFilter);
             LogFilterExecutionPlan(logger, "authorization", authorizationFilters);
         }
 
         public static void ResourceFiltersExecutionPlan(this ILogger logger, IEnumerable<IFilterMetadata> filters)
         {
-            IEnumerable<IFilterMetadata> resourceFilters = null;
-            if (filters != null)
-            {
-                resourceFilters = filters.Where(f => f is IResourceFilter || f is IAsyncResourceFilter);
-            }
+            var resourceFilters = filters.Where(f => f is IResourceFilter || f is IAsyncResourceFilter);
             LogFilterExecutionPlan(logger, "resource", resourceFilters);
         }
 
         public static void ActionFiltersExecutionPlan(this ILogger logger, IEnumerable<IFilterMetadata> filters)
         {
-            IEnumerable<IFilterMetadata> actionFilters = null;
-            if (filters != null)
-            {
-                actionFilters = filters.Where(f => f is IActionFilter || f is IAsyncActionFilter);
-            }
+            var actionFilters = filters.Where(f => f is IActionFilter || f is IAsyncActionFilter);
             LogFilterExecutionPlan(logger, "action", actionFilters);
         }
 
         public static void ExceptionFiltersExecutionPlan(this ILogger logger, IEnumerable<IFilterMetadata> filters)
         {
-            IEnumerable<IFilterMetadata> exceptionFilters = null;
-            if (filters != null)
-            {
-                exceptionFilters = filters.Where(f => f is IExceptionFilter || f is IAsyncExceptionFilter);
-            }
+            var exceptionFilters = filters.Where(f => f is IExceptionFilter || f is IAsyncExceptionFilter);
             LogFilterExecutionPlan(logger, "exception", exceptionFilters);
         }
 
         public static void ResultFiltersExecutionPlan(this ILogger logger, IEnumerable<IFilterMetadata> filters)
         {
-            IEnumerable<IFilterMetadata> resultFilters = null;
-            if (filters != null)
-            {
-                resultFilters = filters.Where(f => f is IResultFilter || f is IAsyncResultFilter);
-            }
+            var resultFilters = filters.Where(f => f is IResultFilter || f is IAsyncResultFilter);
             LogFilterExecutionPlan(logger, "result", resultFilters);
         }
 
@@ -407,11 +390,11 @@ namespace Microsoft.AspNetCore.Mvc.Internal
 
         public static void AfterExecutingMethodOnFilter(
             this ILogger logger,
-            string filteType,
+            string filterType,
             string methodName,
             IFilterMetadata filter)
         {
-            _afterExecutingMethodOnFilter(logger, filteType, methodName, filter.GetType().ToString(), null);
+            _afterExecutingMethodOnFilter(logger, filterType, methodName, filter.GetType().ToString(), null);
         }
 
         public static void ExecutedAction(this ILogger logger, ActionDescriptor action, long startTimestamp)
@@ -745,10 +728,13 @@ namespace Microsoft.AspNetCore.Mvc.Internal
             }
         }
 
-        private static void LogFilterExecutionPlan(ILogger logger, string filterType, IEnumerable<IFilterMetadata> filters)
+        private static void LogFilterExecutionPlan(
+            ILogger logger,
+            string filterType,
+            IEnumerable<IFilterMetadata> filters)
         {
-            string[] filterList = null;
-            if (filters != null && filters.Any())
+            var filterList = _noFilters;
+            if (filters.Any())
             {
                 filterList = GetFilterList(filters);
             }

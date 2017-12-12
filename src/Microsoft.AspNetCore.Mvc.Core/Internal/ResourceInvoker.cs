@@ -219,7 +219,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
 
                         _diagnosticSource.BeforeOnAuthorizationAsync(authorizationContext, filter);
                         _logger.BeforeExecutingMethodOnFilter(
-                            FilterCategoryConstants.AuthorizationFilter,
+                            FilterTypeConstants.AuthorizationFilter,
                             nameof(IAsyncAuthorizationFilter.OnAuthorizationAsync),
                             filter);
 
@@ -243,7 +243,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
 
                         _diagnosticSource.AfterOnAuthorizationAsync(authorizationContext, filter);
                         _logger.AfterExecutingMethodOnFilter(
-                            FilterCategoryConstants.AuthorizationFilter,
+                            FilterTypeConstants.AuthorizationFilter,
                             nameof(IAsyncAuthorizationFilter.OnAuthorizationAsync),
                             filter);
 
@@ -265,7 +265,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
 
                         _diagnosticSource.BeforeOnAuthorization(authorizationContext, filter);
                         _logger.BeforeExecutingMethodOnFilter(
-                            FilterCategoryConstants.AuthorizationFilter,
+                            FilterTypeConstants.AuthorizationFilter,
                             nameof(IAuthorizationFilter.OnAuthorization),
                             filter);
 
@@ -273,7 +273,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
 
                         _diagnosticSource.AfterOnAuthorization(authorizationContext, filter);
                         _logger.AfterExecutingMethodOnFilter(
-                            FilterCategoryConstants.AuthorizationFilter,
+                            FilterTypeConstants.AuthorizationFilter,
                             nameof(IAuthorizationFilter.OnAuthorization),
                             filter);
 
@@ -355,7 +355,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
 
                         _diagnosticSource.BeforeOnResourceExecution(resourceExecutingContext, filter);
                         _logger.BeforeExecutingMethodOnFilter(
-                            FilterCategoryConstants.ResourceFilter,
+                            FilterTypeConstants.ResourceFilter,
                             nameof(IAsyncResourceFilter.OnResourceExecutionAsync),
                             filter);
 
@@ -386,7 +386,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
 
                             _diagnosticSource.AfterOnResourceExecution(_resourceExecutedContext, filter);
                             _logger.AfterExecutingMethodOnFilter(
-                                FilterCategoryConstants.ResourceFilter,
+                                FilterTypeConstants.ResourceFilter,
                                 nameof(IAsyncResourceFilter.OnResourceExecutionAsync),
                                 filter);
 
@@ -410,7 +410,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
 
                         _diagnosticSource.BeforeOnResourceExecuting(resourceExecutingContext, filter);
                         _logger.BeforeExecutingMethodOnFilter(
-                            FilterCategoryConstants.ResourceFilter,
+                            FilterTypeConstants.ResourceFilter,
                             nameof(IResourceFilter.OnResourceExecuting),
                             filter);
 
@@ -418,7 +418,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
 
                         _diagnosticSource.AfterOnResourceExecuting(resourceExecutingContext, filter);
                         _logger.AfterExecutingMethodOnFilter(
-                            FilterCategoryConstants.ResourceFilter,
+                            FilterTypeConstants.ResourceFilter,
                             nameof(IResourceFilter.OnResourceExecuting),
                             filter);
 
@@ -454,7 +454,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
 
                         _diagnosticSource.BeforeOnResourceExecuted(resourceExecutedContext, filter);
                         _logger.BeforeExecutingMethodOnFilter(
-                            FilterCategoryConstants.ResourceFilter,
+                            FilterTypeConstants.ResourceFilter,
                             nameof(IResourceFilter.OnResourceExecuted),
                             filter);
 
@@ -462,7 +462,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
 
                         _diagnosticSource.AfterOnResourceExecuted(resourceExecutedContext, filter);
                         _logger.AfterExecutingMethodOnFilter(
-                            FilterCategoryConstants.ResourceFilter,
+                            FilterTypeConstants.ResourceFilter,
                             nameof(IResourceFilter.OnResourceExecuted),
                             filter);
 
@@ -549,7 +549,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
                         {
                             _diagnosticSource.BeforeOnExceptionAsync(exceptionContext, filter);
                             _logger.BeforeExecutingMethodOnFilter(
-                                FilterCategoryConstants.ExceptionFilter,
+                                FilterTypeConstants.ExceptionFilter,
                                 nameof(IAsyncExceptionFilter.OnExceptionAsync),
                                 filter);
 
@@ -576,7 +576,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
 
                         _diagnosticSource.AfterOnExceptionAsync(exceptionContext, filter);
                         _logger.AfterExecutingMethodOnFilter(
-                            FilterCategoryConstants.ExceptionFilter,
+                            FilterTypeConstants.ExceptionFilter,
                             nameof(IAsyncExceptionFilter.OnExceptionAsync),
                             filter);
 
@@ -616,7 +616,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
                         {
                             _diagnosticSource.BeforeOnException(exceptionContext, filter);
                             _logger.BeforeExecutingMethodOnFilter(
-                                FilterCategoryConstants.ExceptionFilter,
+                                FilterTypeConstants.ExceptionFilter,
                                 nameof(IExceptionFilter.OnException),
                                 filter);
 
@@ -624,7 +624,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
 
                             _diagnosticSource.AfterOnException(exceptionContext, filter);
                             _logger.AfterExecutingMethodOnFilter(
-                                FilterCategoryConstants.ExceptionFilter,
+                                FilterTypeConstants.ExceptionFilter,
                                 nameof(IExceptionFilter.OnException),
                                 filter);
 
@@ -775,7 +775,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
 
                         _diagnosticSource.BeforeOnResultExecution(resultExecutingContext, filter);
                         _logger.BeforeExecutingMethodOnFilter(
-                            FilterCategoryConstants.ResultFilter,
+                            FilterTypeConstants.ResultFilter,
                             nameof(IAsyncResultFilter.OnResultExecutionAsync),
                             filter);
 
@@ -815,7 +815,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
 
                         _diagnosticSource.AfterOnResultExecution(_resultExecutedContext, filter);
                         _logger.AfterExecutingMethodOnFilter(
-                            FilterCategoryConstants.ResultFilter,
+                            FilterTypeConstants.ResultFilter,
                             nameof(IAsyncResultFilter.OnResultExecutionAsync),
                             filter);
 
@@ -832,7 +832,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
 
                         _diagnosticSource.BeforeOnResultExecuting(resultExecutingContext, filter);
                         _logger.BeforeExecutingMethodOnFilter(
-                            FilterCategoryConstants.ResultFilter,
+                            FilterTypeConstants.ResultFilter,
                             nameof(IResultFilter.OnResultExecuting),
                             filter);
 
@@ -840,7 +840,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
 
                         _diagnosticSource.AfterOnResultExecuting(resultExecutingContext, filter);
                         _logger.AfterExecutingMethodOnFilter(
-                            FilterCategoryConstants.ResultFilter,
+                            FilterTypeConstants.ResultFilter,
                             nameof(IResultFilter.OnResultExecuting),
                             filter);
 
@@ -882,7 +882,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
 
                         _diagnosticSource.BeforeOnResultExecuted(resultExecutedContext, filter);
                         _logger.BeforeExecutingMethodOnFilter(
-                            FilterCategoryConstants.ResultFilter,
+                            FilterTypeConstants.ResultFilter,
                             nameof(IResultFilter.OnResultExecuted),
                             filter);
 
@@ -890,7 +890,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
 
                         _diagnosticSource.AfterOnResultExecuted(resultExecutedContext, filter);
                         _logger.AfterExecutingMethodOnFilter(
-                            FilterCategoryConstants.ResultFilter,
+                            FilterTypeConstants.ResultFilter,
                             nameof(IResultFilter.OnResultExecuted),
                             filter);
 
@@ -1214,7 +1214,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
             InvokeEnd,
         }
 
-        private class FilterCategoryConstants
+        private static class FilterTypeConstants
         {
             public const string AuthorizationFilter = "Authorization Filter";
             public const string ResourceFilter = "Resource Filter";
