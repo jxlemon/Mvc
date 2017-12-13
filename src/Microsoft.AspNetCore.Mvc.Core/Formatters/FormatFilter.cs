@@ -39,6 +39,16 @@ namespace Microsoft.AspNetCore.Mvc.Formatters
         /// <param name="loggerFactory">The <see cref="ILoggerFactory"/>.</param>
         public FormatFilter(IOptions<MvcOptions> options, ILoggerFactory loggerFactory)
         {
+            if (options == null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
+            if (loggerFactory == null)
+            {
+                throw new ArgumentNullException(nameof(loggerFactory));
+            }
+
             _options = options.Value;
             _logger = loggerFactory.CreateLogger(GetType());
         }

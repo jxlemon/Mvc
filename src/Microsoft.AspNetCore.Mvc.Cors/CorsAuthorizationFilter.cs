@@ -42,6 +42,21 @@ namespace Microsoft.AspNetCore.Mvc.Cors
             ICorsPolicyProvider policyProvider,
             ILoggerFactory loggerFactory)
         {
+            if (corsService == null)
+            {
+                throw new ArgumentNullException(nameof(corsService));
+            }
+
+            if (policyProvider == null)
+            {
+                throw new ArgumentNullException(nameof(policyProvider));
+            }
+
+            if (loggerFactory == null)
+            {
+                throw new ArgumentNullException(nameof(loggerFactory));
+            }
+
             _corsService = corsService;
             _corsPolicyProvider = policyProvider;
             _logger = loggerFactory.CreateLogger(GetType());
