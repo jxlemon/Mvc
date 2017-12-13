@@ -185,5 +185,11 @@ namespace Microsoft.AspNetCore.Mvc
         /// why the JSON they posted is considered invalid.
         /// </summary>
         public bool SuppressJsonDeserializationExceptionMessagesInModelState { get; set; } = false;
+
+        /// <summary>
+        /// Gets or sets a flag to determine whether AuthorizeFilters will be combined into a single
+        /// effective policy. This was always to be the intended behavior, but was not the case.
+        /// </summary>
+        public bool CombineAuthorizeFilters { get; set;}
     }
 }

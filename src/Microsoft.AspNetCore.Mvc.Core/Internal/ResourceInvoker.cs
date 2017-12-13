@@ -76,6 +76,9 @@ namespace Microsoft.AspNetCore.Mvc.Internal
             _cursor = new FilterCursor(filters);
         }
 
+        // If true, all AuthorizeFilters will be combined into a single AuthorizationPolicy.
+        public bool CombineAuthorizeFilters { get; set; }
+
         public virtual async Task InvokeAsync()
         {
             try
@@ -179,7 +182,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
                         {
                             if (_authorizationContext == null)
                             {
-                                _authorizationContext = new AuthorizationFilterContext(_actionContext, _filters);
+                                _authorizationContext = new AuthorizationFilterContext(_actionContext, _filters, CombineAuthorizeFilters);
                             }
 
                             state = current.FilterAsync;
@@ -189,7 +192,7 @@ namespace Microsoft.AspNetCore.Mvc.Internal
                         {
                             if (_authorizationContext == null)
                             {
-                                _authorizationContext = new AuthorizationFilterContext(_actionContext, _filters);
+                                _authorizationContext = new AuthorizationFilterContext(_actionContext, _filters, CombineAuthorizeFilters);
                             }
 
                             state = current.Filter;
