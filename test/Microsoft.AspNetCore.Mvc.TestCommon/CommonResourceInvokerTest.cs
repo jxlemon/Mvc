@@ -557,22 +557,20 @@ namespace Microsoft.AspNetCore.Mvc
         }
 
         [Fact]
-        public async Task InvokeAction_WithExceptionFilterInTheStack_InvokesResult()
+        public async Task InvokeAction_WithExceptionFilterInTheStack_InvokesResultFilter()
         {
             // Arrange
             var exceptionFilter = new Mock<IExceptionFilter>();
-            var actionFilter = new Mock<IAsyncActionFilter>();
             var resultFilter = new Mock<IResultFilter>();
 
             var invoker = CreateInvoker(
-                new IFilterMetadata[] { exceptionFilter.Object, actionFilter.Object, resultFilter.Object });
+                new IFilterMetadata[] { exceptionFilter.Object, resultFilter.Object });
 
             // Act
             await invoker.InvokeAsync();
 
             // Assert
             exceptionFilter.Verify(f => f.OnException(It.IsAny<ExceptionContext>()), Times.Never());
-            actionFilter.Verify(f => f.OnActionExecutionAsync(It.IsAny<ActionExecutingContext>(), It.IsAny<ActionExecutionDelegate>()), Times.Once());
             resultFilter.Verify(f => f.OnResultExecuting(It.IsAny<ResultExecutingContext>()), Times.Once());
         }
 
@@ -1745,12 +1743,13 @@ namespace Microsoft.AspNetCore.Mvc
                 .Callback<ResultExecutedContext>(c => Assert.Same(Result, c.Result))
                 .Verifiable();
 
-            var authorizationFilter = new Mock<IAuthorizationFilter>(MockBehavior.Strict);
+            var authorizationFilter = new Mock<IAsyncAuthorizationFilter>(MockBehavior.Strict);
             authorizationFilter
-                .Setup(f => f.OnAuthorization(It.IsAny<AuthorizationFilterContext>()))
-                .Callback<AuthorizationFilterContext>((c) =>
+                .Setup(f => f.OnAuthorizationAsync(It.IsAny<AuthorizationFilterContext>()))
+                .Returns<AuthorizationFilterContext>((c) =>
                 {
                     c.Result = Result;
+                    return Task.CompletedTask;
                 });
 
             var invoker = CreateInvoker(new IFilterMetadata[] { authorizationFilter.Object, resultFilter.Object, });
@@ -1803,6 +1802,10 @@ namespace Microsoft.AspNetCore.Mvc
             var resultFilter2 = new Mock<IAsyncResultFilter>(MockBehavior.Strict);
             resultFilter2.Setup(f => f.OnResultExecutionAsync(It.IsAny<ResultExecutingContext>(), It.IsAny<ResultExecutionDelegate>()));
 
+            var resultFilter3 = new Mock<IAsyncAlwaysRunResultFilter>(MockBehavior.Strict);
+            resultFilter3.Setup(f => f.OnResultExecutionAsync(It.IsAny<ResultExecutingContext>(), It.IsAny<ResultExecutionDelegate>()))
+                .Returns(Task.CompletedTask);
+
             var authorizationFilter = new Mock<IAuthorizationFilter>(MockBehavior.Strict);
             authorizationFilter
                 .Setup(f => f.OnAuthorization(It.IsAny<AuthorizationFilterContext>()))
@@ -1811,7 +1814,7 @@ namespace Microsoft.AspNetCore.Mvc
                     c.Result = Result;
                 });
 
-            var invoker = CreateInvoker(new IFilterMetadata[] { authorizationFilter.Object, resultFilter1.Object, resultFilter2.Object, });
+            var invoker = CreateInvoker(new IFilterMetadata[] { authorizationFilter.Object, resultFilter1.Object, resultFilter2.Object, resultFilter3.Object, });
 
             // Act
             await invoker.InvokeAsync();
@@ -1826,6 +1829,9 @@ namespace Microsoft.AspNetCore.Mvc
             resultFilter2.Verify(
                 f => f.OnResultExecutionAsync(It.IsAny<ResultExecutingContext>(), It.IsAny<ResultExecutionDelegate>()),
                 Times.Never());
+            resultFilter3.Verify(
+                f => f.OnResultExecutionAsync(It.IsAny<ResultExecutingContext>(), It.IsAny<ResultExecutionDelegate>()),
+                Times.Once());
         }
 
         [Fact]
@@ -1840,10 +1846,14 @@ namespace Microsoft.AspNetCore.Mvc
                 .Callback<ResultExecutedContext>(c => Assert.Same(Result, c.Result))
                 .Verifiable();
 
-            var resourceFilter = new Mock<IResourceFilter>(MockBehavior.Strict);
+            var resourceFilter = new Mock<IAsyncResourceFilter>(MockBehavior.Strict);
             resourceFilter
-                .Setup(f => f.OnResourceExecuting(It.IsAny<ResourceExecutingContext>()))
-                .Callback<ResourceExecutingContext>(c => c.Result = Result);
+                .Setup(f => f.OnResourceExecutionAsync(It.IsAny<ResourceExecutingContext>(), It.IsAny<ResourceExecutionDelegate>()))
+                .Returns<ResourceExecutingContext, ResourceExecutionDelegate>((c, next) =>
+                {
+                    c.Result = Result;
+                    return Task.CompletedTask;
+                });
 
             var invoker = CreateInvoker(new IFilterMetadata[] { resourceFilter.Object, resultFilter.Object, });
 
@@ -1892,12 +1902,16 @@ namespace Microsoft.AspNetCore.Mvc
             var resultFilter2 = new Mock<IAsyncResultFilter>(MockBehavior.Strict);
             resultFilter2.Setup(f => f.OnResultExecutionAsync(It.IsAny<ResultExecutingContext>(), It.IsAny<ResultExecutionDelegate>()));
 
+            var resultFilter3 = new Mock<IAsyncAlwaysRunResultFilter>(MockBehavior.Strict);
+            resultFilter3.Setup(f => f.OnResultExecutionAsync(It.IsAny<ResultExecutingContext>(), It.IsAny<ResultExecutionDelegate>()))
+                .Returns(Task.CompletedTask);
+
             var resourceFilter = new Mock<IResourceFilter>(MockBehavior.Strict);
             resourceFilter
                 .Setup(f => f.OnResourceExecuting(It.IsAny<ResourceExecutingContext>()))
                 .Callback<ResourceExecutingContext>(c => c.Result = Result);
 
-            var invoker = CreateInvoker(new IFilterMetadata[] { resourceFilter.Object, resultFilter1.Object, resultFilter2.Object, });
+            var invoker = CreateInvoker(new IFilterMetadata[] { resourceFilter.Object, resultFilter1.Object, resultFilter2.Object, resultFilter3.Object, });
 
             // Act
             await invoker.InvokeAsync();
@@ -1912,6 +1926,9 @@ namespace Microsoft.AspNetCore.Mvc
             resultFilter2.Verify(
                 f => f.OnResultExecutionAsync(It.IsAny<ResultExecutingContext>(), It.IsAny<ResultExecutionDelegate>()),
                 Times.Never());
+            resultFilter3.Verify(
+                f => f.OnResultExecutionAsync(It.IsAny<ResultExecutingContext>(), It.IsAny<ResultExecutionDelegate>()),
+                Times.Once());
         }
 
         [Fact]
@@ -1926,10 +1943,14 @@ namespace Microsoft.AspNetCore.Mvc
                 .Callback<ResultExecutedContext>(c => Assert.Same(Result, c.Result))
                 .Verifiable();
 
-            var exceptionFilter = new Mock<IExceptionFilter>(MockBehavior.Strict);
+            var exceptionFilter = new Mock<IAsyncExceptionFilter>(MockBehavior.Strict);
             exceptionFilter
-                .Setup(f => f.OnException(It.IsAny<ExceptionContext>()))
-                .Callback<ExceptionContext>(c => c.Result = Result);
+                .Setup(f => f.OnExceptionAsync(It.IsAny<ExceptionContext>()))
+                .Returns<ExceptionContext>(c =>
+                {
+                    c.Result = Result;
+                    return Task.CompletedTask;
+                });
 
             var invoker = CreateInvoker(new IFilterMetadata[] { exceptionFilter.Object, resultFilter.Object, }, Exception);
 
@@ -1978,13 +1999,17 @@ namespace Microsoft.AspNetCore.Mvc
             var resultFilter2 = new Mock<IAsyncResultFilter>(MockBehavior.Strict);
             resultFilter2.Setup(f => f.OnResultExecutionAsync(It.IsAny<ResultExecutingContext>(), It.IsAny<ResultExecutionDelegate>()));
 
+            var resultFilter3 = new Mock<IAsyncAlwaysRunResultFilter>(MockBehavior.Strict);
+            resultFilter3.Setup(f => f.OnResultExecutionAsync(It.IsAny<ResultExecutingContext>(), It.IsAny<ResultExecutionDelegate>()))
+                .Returns(Task.CompletedTask);
+
             var exceptionFilter = new Mock<IExceptionFilter>(MockBehavior.Strict);
             exceptionFilter
                 .Setup(f => f.OnException(It.IsAny<ExceptionContext>()))
                 .Callback<ExceptionContext>(c => c.Result = Result);
 
             var invoker = CreateInvoker(
-                new IFilterMetadata[] { exceptionFilter.Object, resultFilter1.Object, resultFilter2.Object, },
+                new IFilterMetadata[] { exceptionFilter.Object, resultFilter1.Object, resultFilter2.Object, resultFilter3.Object, },
                 Exception);
 
             // Act
@@ -2000,6 +2025,9 @@ namespace Microsoft.AspNetCore.Mvc
             resultFilter2.Verify(
                 f => f.OnResultExecutionAsync(It.IsAny<ResultExecutingContext>(), It.IsAny<ResultExecutionDelegate>()),
                 Times.Never());
+            resultFilter3.Verify(
+                f => f.OnResultExecutionAsync(It.IsAny<ResultExecutingContext>(), It.IsAny<ResultExecutionDelegate>()),
+                Times.Once());
         }
 
         [Fact]

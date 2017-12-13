@@ -41,38 +41,12 @@ namespace Microsoft.AspNetCore.Mvc.Internal
             IFilterMetadata[] filters,
             IList<IValueProviderFactory> valueProviderFactories)
         {
+            _diagnosticSource = diagnosticSource ?? throw new ArgumentNullException(nameof(diagnosticSource));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _actionContext = actionContext ?? throw new ArgumentNullException(nameof(actionContext));
 
-            if (diagnosticSource == null)
-            {
-                throw new ArgumentNullException(nameof(diagnosticSource));
-            }
-
-            if (logger == null)
-            {
-                throw new ArgumentNullException(nameof(logger));
-            }
-
-            if (actionContext == null)
-            {
-                throw new ArgumentNullException(nameof(actionContext));
-            }
-
-            if (filters == null)
-            {
-                throw new ArgumentNullException(nameof(filters));
-            }
-
-            if (valueProviderFactories == null)
-            {
-                throw new ArgumentNullException(nameof(valueProviderFactories));
-            }
-
-            _diagnosticSource = diagnosticSource;
-            _logger = logger;
-            _actionContext = actionContext;
-
-            _filters = filters;
-            _valueProviderFactories = valueProviderFactories;
+            _filters = filters ?? throw new ArgumentNullException(nameof(filters));
+            _valueProviderFactories = valueProviderFactories ?? throw new ArgumentNullException(nameof(valueProviderFactories));
             _cursor = new FilterCursor(filters);
         }
 
