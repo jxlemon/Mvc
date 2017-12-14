@@ -351,30 +351,55 @@ namespace Microsoft.AspNetCore.Mvc.Internal
 
         public static void AuthorizationFiltersExecutionPlan(this ILogger logger, IEnumerable<IFilterMetadata> filters)
         {
+            if (!logger.IsEnabled(LogLevel.Debug))
+            {
+                return;
+            }
+
             var authorizationFilters = filters.Where(f => f is IAuthorizationFilter || f is IAsyncAuthorizationFilter);
             LogFilterExecutionPlan(logger, "authorization", authorizationFilters);
         }
 
         public static void ResourceFiltersExecutionPlan(this ILogger logger, IEnumerable<IFilterMetadata> filters)
         {
+            if (!logger.IsEnabled(LogLevel.Debug))
+            {
+                return;
+            }
+
             var resourceFilters = filters.Where(f => f is IResourceFilter || f is IAsyncResourceFilter);
             LogFilterExecutionPlan(logger, "resource", resourceFilters);
         }
 
         public static void ActionFiltersExecutionPlan(this ILogger logger, IEnumerable<IFilterMetadata> filters)
         {
+            if (!logger.IsEnabled(LogLevel.Debug))
+            {
+                return;
+            }
+
             var actionFilters = filters.Where(f => f is IActionFilter || f is IAsyncActionFilter);
             LogFilterExecutionPlan(logger, "action", actionFilters);
         }
 
         public static void ExceptionFiltersExecutionPlan(this ILogger logger, IEnumerable<IFilterMetadata> filters)
         {
+            if (!logger.IsEnabled(LogLevel.Debug))
+            {
+                return;
+            }
+
             var exceptionFilters = filters.Where(f => f is IExceptionFilter || f is IAsyncExceptionFilter);
             LogFilterExecutionPlan(logger, "exception", exceptionFilters);
         }
 
         public static void ResultFiltersExecutionPlan(this ILogger logger, IEnumerable<IFilterMetadata> filters)
         {
+            if (!logger.IsEnabled(LogLevel.Debug))
+            {
+                return;
+            }
+
             var resultFilters = filters.Where(f => f is IResultFilter || f is IAsyncResultFilter);
             LogFilterExecutionPlan(logger, "result", resultFilters);
         }
@@ -733,11 +758,6 @@ namespace Microsoft.AspNetCore.Mvc.Internal
             string filterType,
             IEnumerable<IFilterMetadata> filters)
         {
-            if (!logger.IsEnabled(LogLevel.Debug))
-            {
-                return;
-            }
-
             var filterList = _noFilters;
             if (filters.Any())
             {
