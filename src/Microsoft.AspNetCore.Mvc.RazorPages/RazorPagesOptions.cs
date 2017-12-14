@@ -44,9 +44,14 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages
             }
         }
 
-        public bool EnableAreas { get; set; } = true;
+        public bool DisableAreas { get; set; }
 
-        public string AreasRootDirectory
+        /// <summary>
+        /// Application relative path used as the root of discovery for Razor Page files associated with areas.
+        /// Defaults to the <c>/Areas</c> directory under application root.
+        /// <seealso cref="DisableAreas" />
+        /// </summary>
+        public string AreaRootDirectory
         {
             get => _areasRoot;
             set

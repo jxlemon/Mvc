@@ -4,6 +4,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Routing;
 
 namespace Microsoft.AspNetCore.Mvc.ApplicationModels
 {
@@ -54,6 +57,9 @@ namespace Microsoft.AspNetCore.Mvc.ApplicationModels
         /// <summary>
         /// Gets the path relative to the base path for page discovery.
         /// </summary>
+        /// <remarks>
+        /// For area pages, this path is calculated relative to the <see cref="RazorPagesOptions.RootDirectory"/> of the specific area.
+        /// </remarks>
         public string ViewEnginePath { get; }
 
         /// <summary>
@@ -66,6 +72,17 @@ namespace Microsoft.AspNetCore.Mvc.ApplicationModels
         /// </summary>
         public IList<SelectorModel> Selectors { get; }
 
+        /// <summary>
+        /// Gets a collection of route values that must be present in the <see cref="RouteData.Values"/> 
+        /// for the corresponding page to be selected.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// The value of <see cref="ViewEnginePath"/> is considered an implicit route value corresponding
+        /// to the key <c>page</c>. These entries will be added to <see cref="ActionDescriptor.RouteValues"/>, 
+        /// but will not be visible in <see cref="RouteValues"/>.
+        /// </para>
+        /// </remarks>
         public IDictionary<string, string> RouteValues { get; }
     }
 }

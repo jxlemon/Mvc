@@ -87,10 +87,6 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure
                     FilterDescriptors = Array.Empty<FilterDescriptor>(),
                     Properties = new Dictionary<object, object>(model.Properties),
                     RelativePath = model.RelativePath,
-                    RouteValues = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-                    {
-                        { "page", model.ViewEnginePath },
-                    },
                     ViewEnginePath = model.ViewEnginePath,
                 };
 
@@ -100,6 +96,11 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure
                     {
                         descriptor.RouteValues.Add(kvp.Key, kvp.Value);
                     }
+                }
+
+                if (!descriptor.RouteValues.ContainsKey("page"))
+                {
+                    descriptor.RouteValues.Add("page", model.ViewEnginePath);
                 }
 
                 actions.Add(descriptor);

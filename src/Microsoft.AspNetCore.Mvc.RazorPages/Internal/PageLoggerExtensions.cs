@@ -17,6 +17,7 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Internal
         private static readonly Action<ILogger, string, string, Exception> _handlerMethodExecuted;
         private static readonly Action<ILogger, object, Exception> _pageFilterShortCircuit;
         private static readonly Action<ILogger, string, string[], Exception> _malformedPageDirective;
+        private static readonly Action<ILogger, string, string, string, string, Exception> _unsupportedAreaPath;
 
         static PageLoggerExtensions()
         {
@@ -41,6 +42,11 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Internal
                 LogLevel.Warning,
                 104,
                 "The page directive at '{FilePath}' is malformed. Please fix the following issues: {Diagnostics}");
+
+            _unsupportedAreaPath = LoggerMessage.Define<string, string, string, string>(
+                LogLevel.Warning,
+                1,
+                "The page at '{FilePath}' is located under the area root directory '{AreaRootDirectory}' but does not follow the path format '{AreaRootDirectory}{RootDirectory}/Directory/FileName.cshtml");
         }
 
         public static void ExecutingHandlerMethod(this ILogger logger, PageContext context, HandlerMethodDescriptor handler, object[] arguments)
@@ -96,6 +102,14 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Internal
                 }
 
                 _malformedPageDirective(logger, filePath, messages, null);
+            }
+        }
+
+        public static void UnsupportedAreaPath(this ILogger logger, RazorPagesOptions options, string filePath)
+        {
+            if (logger.IsEnabled(LogLevel.Warning))
+            {
+                _unsupportedAreaPath(logger, filePath, options.AreaRootDirectory, options.AreaRootDirectory, options.RootDirectory, null);
             }
         }
     }
